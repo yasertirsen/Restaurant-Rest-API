@@ -1,64 +1,33 @@
 package com.example.restaurant.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
+@Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Email
+    @NotEmpty
     private String email;
+    @NotEmpty
+    private String username;
+    @NotEmpty
+    private String password;
     private String phone;
     private String name;
-    @OneToMany
-    private List<Order> orders;
-
-    public User() {
-
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
 }
