@@ -18,12 +18,12 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Long id;
+    private String name;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "itemId")
-    private List<OrderItem> items;
-    private Long userId;
+    private List<MenuItem> menuItems;
 }
