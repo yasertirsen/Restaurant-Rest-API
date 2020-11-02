@@ -1,5 +1,6 @@
 package com.example.restaurant.controller;
 
+import com.example.restaurant.model.Address;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.service.MainService;
 import lombok.AllArgsConstructor;
@@ -19,42 +20,42 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/items")
+@RequestMapping("/api/addresses")
 @AllArgsConstructor
-public class MenuItemController {
+public class AddressController {
 
     private final MainService service;
 
     @GetMapping(value = "/all", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> getAllMenuItems() {
-        return service.getAllMenuItems();
+    public ResponseEntity<?> getAllAddresses() {
+        return service.getAllMenuAddresses();
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> getMenuItem(@PathVariable Long id) {
-        return service.getMenuItem(id);
+    public ResponseEntity<?> getAddress(@PathVariable Long id) {
+        return service.getAddress(id);
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<?> addMenuItem(@Valid @RequestBody MenuItem menuItem, BindingResult result) {
+    public ResponseEntity<?> addAddress(@Valid @RequestBody Address address, BindingResult result) {
         if(result.hasErrors())
-            return new ResponseEntity<>("Check item information is correct", HttpStatus.BAD_REQUEST);
-        return service.addMenuItem(menuItem);
+            return new ResponseEntity<>("Check address information is correct", HttpStatus.BAD_REQUEST);
+        return service.addAddress(address);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteMenuItem(@PathVariable Long id) {
-        return service.deleteMenuItem(id);
+    public ResponseEntity<?> deleteAddress(@PathVariable Long id) {
+        return service.deleteAddress(id);
     }
 
     @PutMapping(value = "/update", produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<?> updateMenuItem(@Valid @RequestBody MenuItem menuItem, BindingResult result) {
+    public ResponseEntity<?> updateMenuItem(@Valid @RequestBody Address address, BindingResult result) {
         if(result.hasErrors())
-            return new ResponseEntity<>("Couldn't update item, check information is correct", HttpStatus.BAD_REQUEST);
-        return service.updateMenuItem(menuItem);
+            return new ResponseEntity<>("Couldn't update address, check information is correct", HttpStatus.BAD_REQUEST);
+        return service.updateAddress(address);
     }
 }

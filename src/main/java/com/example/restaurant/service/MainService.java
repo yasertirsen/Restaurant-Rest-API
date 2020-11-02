@@ -1,9 +1,11 @@
 package com.example.restaurant.service;
 
+import com.example.restaurant.model.Address;
 import com.example.restaurant.model.Menu;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.model.Order;
 import com.example.restaurant.model.User;
+import com.example.restaurant.repository.AddressRepository;
 import com.example.restaurant.repository.MenuItemRepository;
 import com.example.restaurant.repository.MenuRepository;
 import com.example.restaurant.repository.OrderRepository;
@@ -25,6 +27,7 @@ public class MainService {
     private final OrderRepository orderRepository;
     private final MenuItemRepository menuItemRepository;
     private final MenuRepository menuRepository;
+    private final AddressRepository addressRepository;
 
     public ResponseEntity<?> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -159,5 +162,38 @@ public class MainService {
 
     public ResponseEntity<?> updateMenu(Menu menu) {
         return new ResponseEntity<>(menuRepository.save(menu), HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getAllMenuAddresses() {
+        List<Address> addresses = addressRepository.findAll();
+        if(addresses.isEmpty())
+            return new ResponseEntity<>("No addresses were found", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(addresses, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getAddress(Long id) {
+        if(addressRepository.existsById(id))
+            return new ResponseEntity<>("Address with id " + id + " was not found", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(addressRepository.findById(id ), HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> addAddress(Address address) {
+        return new ResponseEntity<>(addressRepository.save(address), HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<?> deleteAddress(Long id) {
+        if(!addressRepository.existsById(id))
+            return new ResponseEntity<>("Address with id " + id + " was not found", HttpStatus.BAD_REQUEST);
+        try {
+            addressRepository.deleteById(id);
+            return new ResponseEntity<>("Address with id " + id + " has been deleted", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error had occurred while deleting address " +
+                    e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<?> updateAddress(Address address) {
+        return new ResponseEntity<>(addressRepository.save(address), HttpStatus.OK);
     }
 }
