@@ -1,5 +1,7 @@
 package com.example.restaurant.controller;
 
+import com.example.restaurant.model.Address;
+import com.example.restaurant.model.Order;
 import com.example.restaurant.model.User;
 import com.example.restaurant.service.MainService;
 import lombok.AllArgsConstructor;
@@ -38,9 +40,9 @@ public class UserController {
         return service.getUser(id);
     }
 
-    @PostMapping(value = "/add", consumes = "application/json")
+    @PostMapping(value = "/register", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<?> addUser(@Valid @RequestBody User user, BindingResult result) {
+    public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {
         if(result.hasErrors())
             return new ResponseEntity<>("Check user information is correct", HttpStatus.BAD_REQUEST);
         return service.addUser(user);
@@ -57,6 +59,28 @@ public class UserController {
         if(result.hasErrors())
             return new ResponseEntity<>("Couldn't update user, check information is correct", HttpStatus.BAD_REQUEST);
         return service.updateUser(user);
+    }
+
+    @PutMapping(value = "/{userId}/updateaddress", produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> updateUserAddress(@PathVariable Long userId, @Valid @RequestBody Address address, BindingResult result) {
+        if(result.hasErrors())
+            return new ResponseEntity<>("Couldn't update address, check information is correct", HttpStatus.BAD_REQUEST);
+        return service.updateAddress(address, userId);
+    }
+
+    @PostMapping(value = "/{userId}/addorder", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> addOrder(@PathVariable Long userId, @Valid @RequestBody Order order, BindingResult result) {
+        if(result.hasErrors())
+            return new ResponseEntity<>("Check order information is correct", HttpStatus.BAD_REQUEST);
+        return service.addOrder(order, userId);
+    }
+
+    @GetMapping(value = "/{userId}/allorders", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> allOrders(@PathVariable Long userId) {
+        return service.getUserOrders(userId);
     }
 
 }

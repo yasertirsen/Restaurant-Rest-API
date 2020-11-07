@@ -4,6 +4,7 @@ import com.example.restaurant.model.Address;
 import com.example.restaurant.model.Menu;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.model.Order;
+import com.example.restaurant.model.OrderItem;
 import com.example.restaurant.model.User;
 import com.example.restaurant.repository.AddressRepository;
 import com.example.restaurant.repository.MenuItemRepository;
@@ -43,13 +44,13 @@ public class MainService {
     }
 
     public ResponseEntity<?> addUser(User user) {
-        if(findByUsername(user.getUsername()) != null)
-            return new ResponseEntity<>("Username already exits", HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(userRepository.save(user), HttpStatus.CREATED);
-    }
-
-    private User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElse(null);
+        if(userRepository.existsByUsername(user.getUsername()))
+            return new ResponseEntity<>("Username already exits", HttpStatus.CONFLICT);
+        else {
+            if(user.getAddress() == null)
+                user.setAddress(new Address());
+            return new ResponseEntity<>(userRepository.save(user), HttpStatus.CREATED);
+        }
     }
 
     public ResponseEntity<?> deleteUser(Long id) {
@@ -80,7 +81,18 @@ public class MainService {
         return new ResponseEntity<>(orderRepository.findById(id), HttpStatus.OK);
     }
 
-    public ResponseEntity<?> addOrder(Order order) {
+    public ResponseEntity<?> addOrder(Order order, Long userId) {
+        if(order.getUserId() == null)
+            order.setUserId(userId);
+        List<OrderItem> items = order.getItems();
+        if(!order.getItems().isEmpty()) {
+            for(int i = 0; i < order.getItems().size(); i++) {
+                if(menuItemRepository.existsByName(order.getItems().get(i).getMenuItem().getName())) {
+                    items.get(i).setMenuItem(menuItemRepository.findItemByName(order.getItems().get(i).getMenuItem().getName()));
+                }
+            }
+        }
+        order.setItems(items);
         return new ResponseEntity<>(orderRepository.save(order), HttpStatus.CREATED);
     }
 
@@ -112,7 +124,9 @@ public class MainService {
         return new ResponseEntity<>(orderRepository.findById(id), HttpStatus.OK);
     }
 
-    public ResponseEntity<?> addMenuItem(MenuItem menuItem) {
+    public ResponseEntity<?> addMenuItem(MenuItem menuItem, Long menuId) {
+        if(menuItem.getMenuId() == null)
+            menuItem.setMenuId(menuId);
         return new ResponseEntity<>(menuItemRepository.save(menuItem), HttpStatus.CREATED);
     }
 
@@ -193,7 +207,15 @@ public class MainService {
         }
     }
 
-    public ResponseEntity<?> updateAddress(Address address) {
+    public ResponseEntity<?> updateAddress(Address address, Long userId) {
+        if(address.getUserId() == 0)
+            address.setUserId(userId);
         return new ResponseEntity<>(addressRepository.save(address), HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getUserOrders(Long userId) {
+        if(!userRepository.existsById(userId))
+            return new ResponseEntity<>("USER NOT FOUND", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(orderRepository.getAllByUserId(userId), HttpStatus.OK);
     }
 }

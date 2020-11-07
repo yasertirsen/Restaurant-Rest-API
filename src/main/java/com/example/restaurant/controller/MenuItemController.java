@@ -37,14 +37,6 @@ public class MenuItemController {
         return service.getMenuItem(id);
     }
 
-    @PostMapping(value = "/add", consumes = "application/json")
-    @ResponseBody
-    public ResponseEntity<?> addMenuItem(@Valid @RequestBody MenuItem menuItem, BindingResult result) {
-        if(result.hasErrors())
-            return new ResponseEntity<>("Check item information is correct", HttpStatus.BAD_REQUEST);
-        return service.addMenuItem(menuItem);
-    }
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteMenuItem(@PathVariable Long id) {
         return service.deleteMenuItem(id);

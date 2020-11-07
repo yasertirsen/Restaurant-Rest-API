@@ -38,14 +38,6 @@ public class OrderController {
         return service.getOrder(id);
     }
 
-    @PostMapping(value = "/add", consumes = "application/json")
-    @ResponseBody
-    public ResponseEntity<?> addOrder(@Valid @RequestBody Order order, BindingResult result) {
-        if(result.hasErrors())
-            return new ResponseEntity<>("Check order information is correct", HttpStatus.BAD_REQUEST);
-        return service.addOrder(order);
-    }
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
         return service.deleteOrder(id);
